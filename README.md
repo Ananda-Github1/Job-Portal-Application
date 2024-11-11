@@ -24,7 +24,13 @@ npm init
 
 12. Create userModel file in Model folder
 
-13. Use validator for email validation - npm i validator
+13. Use validator for email validation - npm i validator || joi
+
+14. Package install - npm i express-async-errors - || now don't need trycatch block, the package handle that part
+
+
+
+
 
 
 
