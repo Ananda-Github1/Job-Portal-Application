@@ -40,4 +40,34 @@ export const registerController = async (req, res, next) => {
 
 };
 
+// Login controller
+export const loginController = async (req, res, next) => {
+    const { email, password } = req.body;
+    if (!email || !password) {
+        next("Please fill all field")
+    }
+    // Find user by email
+    const user = await userModel.findOne({ email }).select("+password")
+    if (!user) {
+        next("Invalid email or password")
+    }
+
+    // Compare Password
+    const isMatch = await user.comparePassword(password);
+    if (!isMatch) {
+        next("Invalid email or password")
+    }
+    // Password not showing when login
+    user.password = undefined;
+    // Token
+    const token = user.createJWT();
+    res.status(200).json({
+        success: true,
+        message: "Login Successfully",
+        user,
+        token,
+    });
+};
+
+
 

@@ -28,19 +28,25 @@ const userSchema = new mongoose.Schema({
 }, { timestamps: true });
 
 // Full Name
-userSchema.virtual('fullName').get(function() {
+userSchema.virtual('fullName').get(function () {
     return `${this.firstName} ${this.lastName}`
 });
 
 // Virtuals converting documents to JSON
-userSchema.set('toJSON', {virtuals: true});
-userSchema.set('toObject', {virtuals: true});
+userSchema.set('toJSON', { virtuals: true });
+userSchema.set('toObject', { virtuals: true });
 
-// Middlewares
+// Middlewares Password hashing
 userSchema.pre("save", async function () {
     const salt = await bcrypt.genSalt(10);
     this.password = await bcrypt.hash(this.password, salt);
 });
+
+// Compare Password
+userSchema.methods.comparePassword = async function (userPassword) {
+    const isMatch = await bcrypt.compare(userPassword, this.password)
+    return isMatch;
+}
 
 // JSON WEBTOKEN
 userSchema.methods.createJWT = function () {
