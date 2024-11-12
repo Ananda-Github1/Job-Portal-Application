@@ -28,8 +28,9 @@ npm init
 
 14. Package install - npm i express-async-errors - || now don't need trycatch block, the package handle that part
 
-
-
+15. Package install - npm i jsonwebtoken || authentication and authorization. They are used in a variety of ways, including:
+Authentication: When a user logs in, the server issues a JWT as an ID token.
+Authorization: An application may request an Access Token.
 
 
 

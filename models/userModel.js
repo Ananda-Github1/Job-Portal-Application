@@ -1,4 +1,6 @@
-import mongoose from "mongoose"
+import mongoose from "mongoose";
+import bcrypt from 'bcryptjs';
+import JTW from 'jsonwebtoken';
 
 // User Schema
 const userSchema = new mongoose.Schema({
@@ -24,5 +26,26 @@ const userSchema = new mongoose.Schema({
         default: 'India'
     }
 }, { timestamps: true });
+
+// Full Name
+userSchema.virtual('fullName').get(function() {
+    return `${this.firstName} ${this.lastName}`
+});
+
+// Virtuals converting documents to JSON
+userSchema.set('toJSON', {virtuals: true});
+userSchema.set('toObject', {virtuals: true});
+
+// Middlewares
+userSchema.pre("save", async function () {
+    const salt = await bcrypt.genSalt(10);
+    this.password = await bcrypt.hash(this.password, salt);
+});
+
+// JSON WEBTOKEN
+userSchema.methods.createJWT = function () {
+    return JTW.sign({ userId: this._id, email: this.email },
+        process.env.JWT_SECRET, { expiresIn: '1d' })
+};
 
 export default mongoose.model('User', userSchema);
