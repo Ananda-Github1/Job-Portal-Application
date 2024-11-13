@@ -36,8 +36,9 @@ userSchema.virtual('fullName').get(function () {
 userSchema.set('toJSON', { virtuals: true });
 userSchema.set('toObject', { virtuals: true });
 
-// Middlewares Password hashing
+// Password hashing
 userSchema.pre("save", async function () {
+    if(!this.isModified) return;
     const salt = await bcrypt.genSalt(10);
     this.password = await bcrypt.hash(this.password, salt);
 });
