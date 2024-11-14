@@ -38,21 +38,21 @@ userSchema.set('toObject', { virtuals: true });
 
 // Password hashing
 userSchema.pre("save", async function () {
-    if(!this.isModified) return;
+    if (!this.isModified("password")) return;
     const salt = await bcrypt.genSalt(10);
     this.password = await bcrypt.hash(this.password, salt);
 });
 
 // Compare Password
 userSchema.methods.comparePassword = async function (userPassword) {
-    const isMatch = await bcrypt.compare(userPassword, this.password)
+    const isMatch = await bcrypt.compare(userPassword, this.password);
     return isMatch;
 }
 
-// JSON WEBTOKEN
+// JSON WEBTOKEN CREATE
 userSchema.methods.createJWT = function () {
     return JTW.sign({ userId: this._id, email: this.email },
-        process.env.JWT_SECRET, { expiresIn: '1d' })
+        process.env.JWT_SECRET, { expiresIn: '15d' })
 };
 
 export default mongoose.model('User', userSchema);
